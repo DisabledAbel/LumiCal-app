@@ -64,6 +64,7 @@ const Auth = () => {
         });
       }
     } catch (error: any) {
+      console.error('Email auth error:', error);
       toast({
         title: "Authentication Error",
         description: error.message,
@@ -76,19 +77,34 @@ const Auth = () => {
 
   const handleGithubAuth = async () => {
     setLoading(true);
+    console.log('Starting GitHub authentication...');
+    
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'github',
         options: {
           redirectTo: `${window.location.origin}/`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         },
       });
 
-      if (error) throw error;
+      console.log('GitHub auth response:', { data, error });
+
+      if (error) {
+        console.error('GitHub auth error:', error);
+        throw error;
+      }
+
+      // Note: The redirect will happen automatically, so we don't need to do anything else here
+      console.log('GitHub auth initiated successfully');
     } catch (error: any) {
+      console.error('GitHub authentication failed:', error);
       toast({
-        title: "Authentication Error",
-        description: error.message,
+        title: "GitHub Authentication Error",
+        description: error.message || "Failed to authenticate with GitHub. Please try again.",
         variant: "destructive",
       });
       setLoading(false);
