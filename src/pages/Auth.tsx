@@ -18,18 +18,36 @@ const Auth = () => {
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
 
+  console.log('Auth component rendered:', { user, authLoading, loading });
+
   useEffect(() => {
-    if (user) {
+    console.log('Auth useEffect - user changed:', user);
+    if (user && !authLoading) {
+      console.log('User authenticated, navigating to home');
       navigate('/');
     }
-  }, [user, navigate]);
+  }, [user, navigate, authLoading]);
+
+  // Show loading spinner while auth is being checked
+  if (authLoading) {
+    console.log('Auth loading, showing spinner');
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    console.log('Starting email auth:', { isSignUp, email });
 
     try {
       if (isSignUp) {
@@ -110,6 +128,8 @@ const Auth = () => {
       setLoading(false);
     }
   };
+
+  console.log('Rendering auth form');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
