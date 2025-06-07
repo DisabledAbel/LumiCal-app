@@ -1,73 +1,43 @@
-# Welcome to your Lovable project
+# 📅 LumiCal – Your Personalized Smart Calendar
 
-## Project info
+**A beautiful, mobile-first calendar app that blends personal productivity with entertainment and delivery trackin
 
-**URL**: https://lovable.dev/projects/cb8a7851-2c1d-490e-ba7e-6c0b14f4eabe
+---
 
-## How can I edit this code?
+## 📚 Table of Contents
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [Contributing](#contributing)
+- [License](#license)
+- [Credits](#credits)
 
-There are several ways of editing your application.
+---
 
-**Use Lovable**
+## ✅ Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/cb8a7851-2c1d-490e-ba7e-6c0b14f4eabe) and start prompting.
+- 🎨 **Custom Backgrounds** – Upload your own images or choose from curated theme packs.
+- 📺 **TV Show Integration** – Track streaming shows from Netflix, Disney+, HBO, and more.
+- 🎉 **Event Discovery** – Import concerts, festivals, and local public events.
+- 📦 **Package Tracking** – Get live delivery status from USPS and UPS right on your calendar.
+- 📱 **Mobile-First UI** – Clean, intuitive design inspired by Apple Calendar and Notion.
+- 🔔 **Smart Notifications** – Reminders for shows, packages, and events.
+- 🌈 **Color-Coded Items** – Visually separate packages, shows, events, and tasks.
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## 🧰 Tech Stack
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- **Frontend**: React Native / Flutter (choose one)
+- **Backend**: Node.js + Express / Firebase
+- **Database**: MongoDB / Firestore
+- **Integrations**: TVmaze API, Eventbrite API, USPS/UPS Tracking API
+- **Design**: Figma + Tailwind / Material UI
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## 🚀 Installation
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/cb8a7851-2c1d-490e-ba7e-6c0b14f4eabe) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+**Coming soon**
