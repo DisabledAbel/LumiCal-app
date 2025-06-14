@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Mail, Lock, User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import { resendConfirmationEmail } from './resendConfirmation';
 
 interface AuthFormProps {
   isSignUp: boolean;
@@ -19,9 +20,14 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
   const [fullName, setFullName] = useState('');
   const { toast } = useToast();
 
+  // Track if user should see "resend confirmation"
+  const [showResend, setShowResend] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setShowResend(false);
     console.log('Starting email auth:', { isSignUp, email });
 
     try {
@@ -66,10 +72,8 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
       }
     } catch (error: any) {
       console.error('Email auth error:', error);
-      
       let errorMessage = error.message;
-      
-      // Provide more helpful error messages
+
       if (error.message === 'Invalid login credentials') {
         if (isSignUp) {
           errorMessage = "There was an issue creating your account. Please try again.";
@@ -78,6 +82,7 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
         }
       } else if (error.message.includes('Email not confirmed')) {
         errorMessage = "Please check your email and click the confirmation link before signing in.";
+        setShowResend(true);
       } else if (error.message.includes('User already registered')) {
         errorMessage = "An account with this email already exists. Try signing in instead.";
       }
@@ -89,6 +94,25 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendConfirmation = async () => {
+    setResendLoading(true);
+    try {
+      await resendConfirmationEmail(email);
+      toast({
+        title: "Confirmation email sent",
+        description: "Please check your inbox (and spam folder) for the confirmation link.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error resending email",
+        description: error.message || "Failed to resend the email. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -152,6 +176,23 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
       {!isSignUp && (
         <div className="text-center text-sm text-gray-600">
           <p>If you just signed up, please check your email for a confirmation link first.</p>
+        </div>
+      )}
+
+      {showResend && !isSignUp && (
+        <div className="flex flex-col items-center space-y-2 mt-2">
+          <p className="text-xs text-gray-500">
+            Didn't get the confirmation email? Check your spam/junk folder or resend it.
+          </p>
+          <Button
+            type="button"
+            size="sm"
+            className="w-auto"
+            onClick={handleResendConfirmation}
+            disabled={resendLoading}
+          >
+            {resendLoading ? 'Resending...' : 'Resend confirmation email'}
+          </Button>
         </div>
       )}
     </form>
