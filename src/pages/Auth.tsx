@@ -96,14 +96,8 @@ const Auth = () => {
   const handleGithubAuth = async () => {
     setLoading(true);
     console.log('Starting GitHub authentication...');
-    console.log('Supabase client info:', {
-      url: supabase.supabaseUrl,
-      key: supabase.supabaseKey?.substring(0, 20) + '...',
-    });
     
     try {
-      console.log('Attempting to call signInWithOAuth...');
-      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'github',
         options: {
@@ -118,22 +112,14 @@ const Auth = () => {
       console.log('GitHub auth response:', { data, error });
 
       if (error) {
-        console.error('GitHub auth error details:', {
-          message: error.message,
-          status: error.status,
-          details: error
-        });
+        console.error('GitHub auth error:', error);
         throw error;
       }
 
-      console.log('GitHub auth initiated successfully, should redirect soon...');
+      // Success - OAuth will handle the redirect
+      console.log('GitHub OAuth initiated successfully');
     } catch (error: any) {
-      console.error('GitHub authentication failed:', {
-        error,
-        message: error.message,
-        stack: error.stack,
-        name: error.name
-      });
+      console.error('GitHub authentication failed:', error);
       
       toast({
         title: "GitHub Authentication Error",
