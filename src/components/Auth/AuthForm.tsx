@@ -26,7 +26,7 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -39,12 +39,20 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
 
         if (error) throw error;
 
-        toast({
-          title: "Check your email",
-          description: "We've sent you a confirmation link to complete your signup.",
-        });
+        // Check if email confirmation is required
+        if (data.user && !data.session) {
+          toast({
+            title: "Check your email",
+            description: "We've sent you a confirmation link. Please check your email and click the link to activate your account.",
+          });
+        } else if (data.session) {
+          toast({
+            title: "Account created!",
+            description: "Welcome to CalendarHub!",
+          });
+        }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
@@ -58,9 +66,25 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
       }
     } catch (error: any) {
       console.error('Email auth error:', error);
+      
+      let errorMessage = error.message;
+      
+      // Provide more helpful error messages
+      if (error.message === 'Invalid login credentials') {
+        if (isSignUp) {
+          errorMessage = "There was an issue creating your account. Please try again.";
+        } else {
+          errorMessage = "Invalid email or password. If you just signed up, please check your email for a confirmation link first.";
+        }
+      } else if (error.message.includes('Email not confirmed')) {
+        errorMessage = "Please check your email and click the confirmation link before signing in.";
+      } else if (error.message.includes('User already registered')) {
+        errorMessage = "An account with this email already exists. Try signing in instead.";
+      }
+
       toast({
         title: "Authentication Error",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -116,6 +140,7 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
             onChange={(e) => setPassword(e.target.value)}
             className="pl-10"
             required
+            minLength={6}
           />
         </div>
       </div>
@@ -123,6 +148,12 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? 'Please wait...' : (isSignUp ? 'Create account' : 'Sign in')}
       </Button>
+
+      {!isSignUp && (
+        <div className="text-center text-sm text-gray-600">
+          <p>If you just signed up, please check your email for a confirmation link first.</p>
+        </div>
+      )}
     </form>
   );
 };
