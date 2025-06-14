@@ -1,12 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthLayout from '@/components/Auth/AuthLayout';
 import AuthHeader from '@/components/Auth/AuthHeader';
 import AuthCard from '@/components/Auth/AuthCard';
-import SocialAuthButton from '@/components/Auth/SocialAuthButton';
 import AuthForm from '@/components/Auth/AuthForm';
 import AuthToggle from '@/components/Auth/AuthToggle';
 
@@ -45,19 +43,6 @@ const Auth = () => {
     <AuthLayout>
       <AuthHeader />
       <AuthCard isSignUp={isSignUp}>
-        <SocialAuthButton loading={loading} setLoading={setLoading} />
-        
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <Separator className="w-full" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
-              Or continue with email
-            </span>
-          </div>
-        </div>
-
         <AuthForm 
           isSignUp={isSignUp} 
           loading={loading} 
