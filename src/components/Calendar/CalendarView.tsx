@@ -3,10 +3,12 @@ import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import EventModal from './EventModal';
 
 const CalendarView = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<'month' | 'week' | 'day'>('month');
+  const [showEventModal, setShowEventModal] = useState(false);
 
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -48,6 +50,15 @@ const CalendarView = () => {
 
   const days = getDaysInMonth(currentDate);
 
+  // Event submission handler
+  const handleCreateEvent = (eventData: any) => {
+    // TODO: Save event and invites using hooks
+    // eventData: {title, date, start, end, description, invitees: [friend_ids]}
+    // Implement event creation and insert event_invites for invitees here.
+    // Show success toast.
+    console.log("Create event", eventData);
+  };
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto">
@@ -83,10 +94,18 @@ const CalendarView = () => {
                 </Button>
               ))}
             </div>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+            <Button
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+              onClick={() => setShowEventModal(true)}
+            >
               <Plus className="h-4 w-4 mr-2" />
               New Event
             </Button>
+            <EventModal
+              open={showEventModal}
+              onOpenChange={setShowEventModal}
+              onSubmit={handleCreateEvent}
+            />
           </div>
         </div>
 
@@ -113,17 +132,7 @@ const CalendarView = () => {
                 {day && (
                   <div className="h-full">
                     <div className="text-sm font-medium text-gray-900 mb-1">{day}</div>
-                    {/* Sample events */}
-                    {day === 15 && (
-                      <div className="bg-blue-100 text-blue-800 text-xs p-1 rounded mb-1 truncate">
-                        Team Meeting
-                      </div>
-                    )}
-                    {day === 20 && (
-                      <div className="bg-green-100 text-green-800 text-xs p-1 rounded mb-1 truncate">
-                        Holiday
-                      </div>
-                    )}
+                    {/* Event pills go here */}
                   </div>
                 )}
               </div>
