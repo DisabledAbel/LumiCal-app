@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { uploadBackgroundImage, setUserBackground, getUserBackground } from "@/lib/backgrounds";
@@ -32,16 +31,18 @@ const BackgroundPicker = ({ onBackgroundChange }: { onBackgroundChange?: (url: s
   React.useEffect(() => {
     if (user) {
       getUserBackground(user.id).then((bg) => {
-        if (bg?.image_url) {
-          setSelected(bg.image_url || null);
-          setPreview(bg.image_url || null);
-          onBackgroundChange?.(bg.image_url);
-        } else if (bg?.curated_theme) {
-          const theme = CURATED_THEMES.find(t => t.name === bg.curated_theme);
-          if (theme) {
-            setSelected(theme.url);
-            setPreview(theme.url);
-            onBackgroundChange?.(theme.url);
+        if (bg) {
+          if (bg.image_url) {
+            setSelected(bg.image_url);
+            setPreview(bg.image_url);
+            onBackgroundChange?.(bg.image_url);
+          } else if (bg.curated_theme) {
+            const theme = CURATED_THEMES.find(t => t.name === bg.curated_theme);
+            if (theme) {
+              setSelected(theme.url);
+              setPreview(theme.url);
+              onBackgroundChange?.(theme.url);
+            }
           }
         }
       });

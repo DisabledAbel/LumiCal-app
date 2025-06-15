@@ -1,12 +1,25 @@
 import { supabase } from "@/integrations/supabase/client";
-import { Tables } from "@/integrations/supabase/types";
+// The `Tables` import is removed because `backgrounds` table is not in the generated types yet.
+// Instead, we define a local `Background` type.
+
+// Local type definition for the 'backgrounds' table.
+export type Background = {
+  id: string;
+  user_id: string;
+  image_url: string | null;
+  curated_theme: string | null;
+  created_at: string;
+  updated_at: string;
+};
 
 /**
  * Fetch currently-selected background for user
  */
-export async function getUserBackground(user_id: string): Promise<Tables<"backgrounds"> | null> {
-  const { data, error } = await supabase
-    .from("backgrounds")
+export async function getUserBackground(user_id: string): Promise<Background | null> {
+  // Using `as any` to bypass a TypeScript error because the `backgrounds` table
+  // type is not yet available in the auto-generated `types.ts`.
+  const { data, error } = await (supabase
+    .from("backgrounds") as any)
     .select("*")
     .eq("user_id", user_id)
     .order("updated_at", { ascending: false })
@@ -32,16 +45,20 @@ export async function setUserBackground({
   curated_theme?: string | null;
 }): Promise<boolean> {
   // Upsert to keep only one background per user
-  const { error } = await supabase
-    .from("backgrounds")
-    .upsert([
-      {
-        user_id,
-        image_url: image_url || null,
-        curated_theme: curated_theme || null,
-        updated_at: new Date().toISOString(),
-      }
-    ], { onConflict: "user_id" });
+  // Using `as any` to bypass a TypeScript error.
+  const { error } = await (supabase
+    .from("backgrounds") as any)
+    .upsert(
+      [
+        {
+          user_id,
+          image_url: image_url || null,
+          curated_theme: curated_theme || null,
+          updated_at: new Date().toISOString(),
+        },
+      ],
+      { onConflict: "user_id" }
+    );
 
   if (error) {
     console.error("Error setting user background:", error);

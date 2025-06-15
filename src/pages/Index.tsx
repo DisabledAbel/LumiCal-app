@@ -2,9 +2,6 @@
 import React, { useState } from 'react';
 import Header from '../components/Layout/Header';
 import CalendarView from '../components/Calendar/CalendarView';
-import ThirdPartyApps from '../components/Apps/ThirdPartyApps';
-import DeveloperPortal from '../components/Developer/DeveloperPortal';
-import HolidayPage from '../components/Holidays/HolidayPage';
 import BackgroundPicker from '../components/Settings/BackgroundPicker';
 
 const Index = () => {
@@ -12,15 +9,10 @@ const Index = () => {
   const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null);
 
   const renderCurrentView = () => {
+    // Simplified to only show CalendarView, other views are removed.
     switch (currentView) {
       case 'calendar':
         return <CalendarView />;
-      case 'apps':
-        return <ThirdPartyApps />;
-      case 'developer':
-        return <DeveloperPortal />;
-      case 'holidays':
-        return <HolidayPage />;
       default:
         return <CalendarView />;
     }
@@ -47,4 +39,3 @@ const Index = () => {
 };
 
 export default Index;
-
