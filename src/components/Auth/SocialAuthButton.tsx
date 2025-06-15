@@ -1,5 +1,9 @@
 
 import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Github } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface SocialAuthButtonProps {
   loading: boolean;
@@ -7,8 +11,48 @@ interface SocialAuthButtonProps {
 }
 
 const SocialAuthButton = ({ loading, setLoading }: SocialAuthButtonProps) => {
-  // GitHub authentication removed - component now returns null
-  return null;
+  const { toast } = useToast();
+
+  const handleGitHubLogin = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: {
+          redirectTo: window.location.origin, // After login, user will be redirected here.
+        },
+      });
+      if (error) {
+        toast({
+          title: 'GitHub Login Error',
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+      // No need to handle success here, Supabase will redirect
+    } catch (error: any) {
+      toast({
+        title: 'GitHub Login Error',
+        description: error.message ?? 'Unable to sign in with GitHub',
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      className="w-full flex items-center justify-center gap-2 mb-2"
+      onClick={handleGitHubLogin}
+      disabled={loading}
+    >
+      <Github className="w-5 h-5" />
+      {loading ? "Redirecting..." : "Continue with GitHub"}
+    </Button>
+  );
 };
 
 export default SocialAuthButton;

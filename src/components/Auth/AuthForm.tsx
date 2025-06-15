@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,6 +6,7 @@ import { Mail, Lock, User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast'; // <-- FIXED IMPORT
 import { resendConfirmationEmail } from './resendConfirmation';
+import SocialAuthButton from './SocialAuthButton';
 
 interface AuthFormProps {
   isSignUp: boolean;
@@ -118,6 +118,16 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
 
   return (
     <form onSubmit={handleEmailAuth} className="space-y-4">
+      {/* Add GitHub login button at the top */}
+      <SocialAuthButton loading={loading} setLoading={setLoading} />
+
+      {/* Divider */}
+      <div className="flex items-center mb-2">
+        <div className="flex-grow border-t border-gray-200" />
+        <span className="px-2 text-xs text-gray-400">or</span>
+        <div className="flex-grow border-t border-gray-200" />
+      </div>
+
       {isSignUp && (
         <div className="space-y-2">
           <Label htmlFor="fullName">Full Name</Label>
