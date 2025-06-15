@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -74,9 +73,8 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
           // Dynamically import createClient so it doesn't break SSR/builds
           const { createClient } = await import('@supabase/supabase-js');
           signInSupabase = createClient(
-            // @ts-ignore: The supabase client exposes these constants
-            supabase._options.url,
-            supabase._options.headers['apikey'] || supabase._options.headers['Authorization'],
+            "https://pouxehyvczyzbkwapghd.supabase.co",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvdXhlaHl2Y3p5emJrd2FwZ2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg4NDE0ODIsImV4cCI6MjA2NDQxNzQ4Mn0.i9z3Diarw1rhWlgeURCGyti2YdCaUtO0opNdLgkRXdU",
             {
               auth: {
                 storage: window.sessionStorage,
@@ -219,4 +217,3 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
 };
 
 export default AuthForm;
-
