@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 // The `Tables` import is removed because `backgrounds` table is not in the generated types yet.
 // Instead, we define a local `Background` type.
@@ -18,8 +19,8 @@ export type Background = {
 export async function getUserBackground(user_id: string): Promise<Background | null> {
   // Using `as any` to bypass a TypeScript error because the `backgrounds` table
   // type is not yet available in the auto-generated `types.ts`.
-  const { data, error } = await (supabase
-    .from("backgrounds") as any)
+  const { data, error } = await (supabase as any)
+    .from("backgrounds")
     .select("*")
     .eq("user_id", user_id)
     .order("updated_at", { ascending: false })
@@ -46,8 +47,8 @@ export async function setUserBackground({
 }): Promise<boolean> {
   // Upsert to keep only one background per user
   // Using `as any` to bypass a TypeScript error.
-  const { error } = await (supabase
-    .from("backgrounds") as any)
+  const { error } = await (supabase as any)
+    .from("backgrounds")
     .upsert(
       [
         {
