@@ -17,6 +17,9 @@ interface AuthFormProps {
 }
 
 const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
+  // For debugging
+  console.log('AuthForm rendered. isSignUp:', isSignUp, 'loading:', loading);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -26,8 +29,11 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
   const [showResend, setShowResend] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
 
+  const [formError, setFormError] = useState<string | null>(null);
+
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError(null);
     setLoading(true);
     setShowResend(false);
     console.log('Starting email auth:', { isSignUp, email });
@@ -39,9 +45,7 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/`,
-            data: {
-              full_name: fullName,
-            },
+            data: { full_name: fullName },
           },
         });
 
@@ -88,6 +92,7 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
         errorMessage = "An account with this email already exists. Try signing in instead.";
       }
 
+      setFormError(errorMessage);
       toast({
         title: "Authentication Error",
         description: errorMessage,
@@ -117,6 +122,9 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
     }
   };
 
+  // If you're seeing a blank screen, this log should always appear unless the import/compilation failed.
+  console.log('AuthForm about to return JSX. showResend:', showResend);
+
   return (
     <form onSubmit={handleEmailAuth} className="space-y-4">
       <SocialAuthButton loading={loading} setLoading={setLoading} />
@@ -144,6 +152,10 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
+
+      {formError && (
+        <div className="text-red-600 text-xs text-center">{formError}</div>
+      )}
 
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? 'Please wait...' : (isSignUp ? 'Create account' : 'Sign in')}
