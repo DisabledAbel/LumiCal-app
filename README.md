@@ -1,6 +1,7 @@
-# 📅 LumiCal – Your Personalized Smart Calendar
 
-**A beautiful, mobile-first calendar app that blends personal productivity with entertainment and delivery trackin
+# 📅 Arvo Calu – Your Personalized Smart Calendar
+
+**A beautiful, mobile-first calendar app that blends personal productivity with entertainment and delivery tracking.**
 
 ---
 

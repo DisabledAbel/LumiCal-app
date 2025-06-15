@@ -1,8 +1,8 @@
 
 {
-  "name": "CalendarHub - Smart Calendar Platform",
-  "short_name": "CalendarHub",
-  "description": "A modern calendar platform with developer tools and smart reminders",
+  "name": "Arvo Calu",
+  "short_name": "Arvo Calu",
+  "description": "A beautiful, mobile-first calendar app that blends personal productivity with entertainment and delivery tracking.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
