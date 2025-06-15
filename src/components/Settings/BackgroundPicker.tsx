@@ -1,6 +1,5 @@
-import React, { useState, useRef } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { uploadBackgroundImage, setUserBackground, getUserBackground } from "@/lib/backgrounds";
+
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
@@ -9,74 +8,78 @@ import { toast } from "@/hooks/use-toast";
 const CURATED_THEMES = [
   {
     name: "Ocean",
-    url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1280&q=80"
+    url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1280&q=80",
   },
   {
     name: "Mountains",
-    url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1280&q=80"
+    url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1280&q=80",
   },
   {
     name: "Retro",
-    url: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=1280&q=80"
-  }
+    url: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=1280&q=80",
+  },
 ];
 
-const BackgroundPicker = ({ onBackgroundChange }: { onBackgroundChange?: (url: string) => void }) => {
-  const { user } = useAuth();
+const LOCAL_STORAGE_KEY = "customBackgroundUrl";
+
+const BackgroundPicker = ({
+  onBackgroundChange,
+}: {
+  onBackgroundChange?: (url: string) => void;
+}) => {
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  React.useEffect(() => {
-    if (user) {
-      getUserBackground(user.id).then((bg) => {
-        if (bg) {
-          if (bg.image_url) {
-            setSelected(bg.image_url);
-            setPreview(bg.image_url);
-            onBackgroundChange?.(bg.image_url);
-          } else if (bg.curated_theme) {
-            const theme = CURATED_THEMES.find(t => t.name === bg.curated_theme);
-            if (theme) {
-              setSelected(theme.url);
-              setPreview(theme.url);
-              onBackgroundChange?.(theme.url);
-            }
-          }
-        }
-      });
+  // Load saved background from localStorage on first mount
+  useEffect(() => {
+    const savedUrl = window.localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (savedUrl) {
+      setSelected(savedUrl);
+      setPreview(savedUrl);
+      onBackgroundChange?.(savedUrl);
     }
-    // eslint-disable-next-line
-  }, [user]);
+  }, [onBackgroundChange]);
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!user) return;
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setLoading(true);
-    const url = await uploadBackgroundImage(user.id, file);
-    if (url) {
-      await setUserBackground({ user_id: user.id, image_url: url, curated_theme: null });
-      setSelected(url);
-      setPreview(url);
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const result = event.target?.result as string;
+      setSelected(result);
+      setPreview(result);
+      window.localStorage.setItem(LOCAL_STORAGE_KEY, result);
       toast({ title: "Background updated!" });
-      onBackgroundChange?.(url);
-    } else {
-      toast({ title: "Upload failed", variant: "destructive" });
-    }
-    setLoading(false);
+      onBackgroundChange?.(result);
+      setLoading(false);
+    };
+    reader.onerror = () => {
+      toast({ title: "Failed to load image", variant: "destructive" });
+      setLoading(false);
+    };
+    reader.readAsDataURL(file);
   };
 
-  const handleThemeSelect = async (theme: typeof CURATED_THEMES[0]) => {
-    if (!user) return;
+  const handleThemeSelect = (theme: typeof CURATED_THEMES[0]) => {
     setLoading(true);
-    await setUserBackground({ user_id: user.id, image_url: null, curated_theme: theme.name });
     setSelected(theme.url);
     setPreview(theme.url);
+    window.localStorage.setItem(LOCAL_STORAGE_KEY, theme.url);
     toast({ title: "Background set!" });
     onBackgroundChange?.(theme.url);
     setLoading(false);
+  };
+
+  const handleClear = () => {
+    setSelected(null);
+    setPreview(null);
+    window.localStorage.removeItem(LOCAL_STORAGE_KEY);
+    toast({ title: "Background removed!" });
+    onBackgroundChange?.("");
   };
 
   return (
@@ -86,14 +89,19 @@ const BackgroundPicker = ({ onBackgroundChange }: { onBackgroundChange?: (url: s
       <div>
         <div className="text-sm mb-2">Curated themes:</div>
         <div className="flex gap-3">
-          {CURATED_THEMES.map(theme => (
+          {CURATED_THEMES.map((theme) => (
             <button
               key={theme.name}
               type="button"
               className={`rounded-lg overflow-hidden border-2 ${selected === theme.url ? "border-blue-600" : "border-transparent"} transition-all`}
               onClick={() => handleThemeSelect(theme)}
               disabled={loading}
-              style={{ width: 64, height: 48, backgroundImage: `url(${theme.url})`, backgroundSize: "cover" }}
+              style={{
+                width: 64,
+                height: 48,
+                backgroundImage: `url(${theme.url})`,
+                backgroundSize: "cover",
+              }}
               aria-label={theme.name}
             />
           ))}
@@ -121,12 +129,20 @@ const BackgroundPicker = ({ onBackgroundChange }: { onBackgroundChange?: (url: s
           <div className="text-xs text-gray-500 mb-1">Preview:</div>
           <div
             style={{
-              width: '100%',
+              width: "100%",
               height: 120,
               background: `url(${preview}) center/cover no-repeat`,
               borderRadius: 8,
             }}
           />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="mt-2"
+            onClick={handleClear}
+          >
+            Remove Background
+          </Button>
         </div>
       )}
     </Card>
