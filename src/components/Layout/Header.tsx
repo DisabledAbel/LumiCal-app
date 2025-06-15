@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Calendar, Settings, Users, Code, Bell, LogOut, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import ThemeSwitcher from "../ThemeSwitcher";
 
 interface HeaderProps {
   currentView: string;
@@ -66,6 +66,7 @@ const Header = ({ currentView, onViewChange }: HeaderProps) => {
           </div>
 
           <div className="flex items-center space-x-3">
+            <ThemeSwitcher />
             <Button variant="ghost" size="sm">
               <Bell className="h-4 w-4" />
             </Button>

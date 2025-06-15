@@ -88,6 +88,57 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
+  /* Custom Blue Mode */
+  .theme-blue {
+    --background: 214 100% 96%;
+    --foreground: 212.2 34% 16%;
+
+    --primary: 221 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+
+    --accent: 212.7 100% 60%;
+    --accent-foreground: 210 40% 98%;
+
+    --card: 214 100% 96%;
+    --popover: 214 100% 96%;
+    --secondary: 213 98% 92%;
+    --muted: 217 91% 92%;
+  }
+
+  /* Custom Pink Mode */
+  .theme-pink {
+    --background: 334 100% 98%;
+    --foreground: 334 17% 22%;
+
+    --primary: 334 100% 62%;
+    --primary-foreground: 334 17% 95%;
+
+    --accent: 345 98% 66%;
+    --accent-foreground: 334 17% 95%;
+
+    --card: 334 100% 98%;
+    --popover: 334 100% 98%;
+    --secondary: 334 94% 92%;
+    --muted: 334 80% 94%;
+  }
+
+  /* Custom Purple Mode */
+  .theme-purple {
+    --background: 270 50% 97%;
+    --foreground: 270 18% 16%;
+
+    --primary: 270 91% 62%;
+    --primary-foreground: 270 37% 95%;
+
+    --accent: 263 98% 68%;
+    --accent-foreground: 265 37% 95%;
+
+    --card: 270 50% 97%;
+    --popover: 270 50% 97%;
+    --secondary: 269 94% 92%;
+    --muted: 263 91% 92%;
+  }
 }
 
 @layer base {
