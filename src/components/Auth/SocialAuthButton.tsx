@@ -15,11 +15,12 @@ const SocialAuthButton = ({ loading, setLoading }: SocialAuthButtonProps) => {
 
   const handleGitHubLogin = async () => {
     setLoading(true);
+    console.log("Attempting to login with GitHub via Supabase.");
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'github',
         options: {
-          redirectTo: window.location.origin, // After login, user will be redirected here.
+          redirectTo: window.location.origin, // Ensure this matches your Supabase settings
         },
       });
       if (error) {
@@ -28,14 +29,16 @@ const SocialAuthButton = ({ loading, setLoading }: SocialAuthButtonProps) => {
           description: error.message,
           variant: "destructive",
         });
+        console.error("GitHub Login Error:", error.message);
       }
-      // No need to handle success here, Supabase will redirect
+      // No need to handle success, Supabase will redirect
     } catch (error: any) {
       toast({
         title: 'GitHub Login Error',
         description: error.message ?? 'Unable to sign in with GitHub',
         variant: "destructive",
       });
+      console.error("Exception during GitHub Login:", error);
     } finally {
       setLoading(false);
     }
@@ -56,3 +59,4 @@ const SocialAuthButton = ({ loading, setLoading }: SocialAuthButtonProps) => {
 };
 
 export default SocialAuthButton;
+

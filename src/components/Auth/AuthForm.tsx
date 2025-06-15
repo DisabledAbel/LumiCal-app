@@ -1,10 +1,11 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Mail, Lock, User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast'; // <-- FIXED IMPORT
+import { useToast } from '@/hooks/use-toast';
 import { resendConfirmationEmail } from './resendConfirmation';
 import SocialAuthButton from './SocialAuthButton';
 
@@ -45,7 +46,6 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
 
         if (error) throw error;
 
-        // Check if email confirmation is required
         if (data.user && !data.session) {
           toast({
             title: "Check your email",
@@ -80,10 +80,10 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
         } else {
           errorMessage = "Invalid email or password. If you just signed up, please check your email for a confirmation link first.";
         }
-      } else if (error.message.includes('Email not confirmed')) {
+      } else if (error.message && error.message.includes('Email not confirmed')) {
         errorMessage = "Please check your email and click the confirmation link before signing in.";
         setShowResend(true);
-      } else if (error.message.includes('User already registered')) {
+      } else if (error.message && error.message.includes('User already registered')) {
         errorMessage = "An account with this email already exists. Try signing in instead.";
       }
 
@@ -118,10 +118,8 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
 
   return (
     <form onSubmit={handleEmailAuth} className="space-y-4">
-      {/* Add GitHub login button at the top */}
       <SocialAuthButton loading={loading} setLoading={setLoading} />
 
-      {/* Divider */}
       <div className="flex items-center mb-2">
         <div className="flex-grow border-t border-gray-200" />
         <span className="px-2 text-xs text-gray-400">or</span>
@@ -210,3 +208,4 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
 };
 
 export default AuthForm;
+
