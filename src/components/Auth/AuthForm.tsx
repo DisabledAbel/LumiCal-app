@@ -9,6 +9,8 @@ import FullNameField from './FullNameField';
 import EmailField from './EmailField';
 import PasswordField from './PasswordField';
 import ResendConfirmationSection from './ResendConfirmationSection';
+// Add for Radix UI checkbox
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface AuthFormProps {
   isSignUp: boolean;
@@ -31,12 +33,15 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
 
   const [formError, setFormError] = useState<string | null>(null);
 
+  // New: Stay logged in
+  const [stayLoggedIn, setStayLoggedIn] = useState(true);
+
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
     setLoading(true);
     setShowResend(false);
-    console.log('Starting email auth:', { isSignUp, email });
+    console.log('Starting email auth:', { isSignUp, email, stayLoggedIn });
 
     try {
       if (isSignUp) {
@@ -63,7 +68,25 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
           });
         }
       } else {
-        const { data, error } = await supabase.auth.signInWithPassword({
+        // If user unchecked stayLoggedIn, create a one-off client with sessionStorage
+        let signInSupabase = supabase;
+        if (!stayLoggedIn) {
+          // Dynamically import createClient so it doesn't break SSR/builds
+          const { createClient } = await import('@supabase/supabase-js');
+          signInSupabase = createClient(
+            // @ts-ignore: The supabase client exposes these constants
+            supabase._options.url,
+            supabase._options.headers['apikey'] || supabase._options.headers['Authorization'],
+            {
+              auth: {
+                storage: window.sessionStorage,
+                persistSession: false,
+                autoRefreshToken: true,
+              },
+            }
+          );
+        }
+        const { data, error } = await signInSupabase.auth.signInWithPassword({
           email,
           password,
         });
@@ -153,6 +176,24 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
         onChange={(e) => setPassword(e.target.value)}
       />
 
+      {/* Only show stay logged in for sign in */}
+      {!isSignUp && (
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="stayLoggedIn"
+            checked={stayLoggedIn}
+            onCheckedChange={(checked) => setStayLoggedIn(Boolean(checked))}
+            disabled={loading}
+          />
+          <label
+            htmlFor="stayLoggedIn"
+            className="text-sm select-none text-gray-700 cursor-pointer"
+          >
+            Stay logged in
+          </label>
+        </div>
+      )}
+
       {formError && (
         <div className="text-red-600 text-xs text-center">{formError}</div>
       )}
@@ -178,3 +219,4 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
 };
 
 export default AuthForm;
+
