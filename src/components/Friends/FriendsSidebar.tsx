@@ -52,11 +52,11 @@ const FriendsSidebar = ({
             {requests.map((r) => (
               <li key={r.id} className="py-1 flex gap-2 items-center">
                 <span>{r.name ?? r.username ?? r.email}</span>
-                <Button size="xs" variant="outline" disabled={loading}
+                <Button size="sm" variant="outline" disabled={loading}
                   onClick={() => acceptRequest(r.id)}>
                   Accept
                 </Button>
-                <Button size="xs" variant="ghost" disabled={loading}
+                <Button size="sm" variant="ghost" disabled={loading}
                   onClick={() => rejectRequest(r.id)}>
                   Reject
                 </Button>
@@ -70,3 +70,4 @@ const FriendsSidebar = ({
 };
 
 export default FriendsSidebar;
+
