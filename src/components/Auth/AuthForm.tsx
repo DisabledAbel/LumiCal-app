@@ -1,13 +1,14 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Mail, Lock, User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { resendConfirmationEmail } from './resendConfirmation';
 import SocialAuthButton from './SocialAuthButton';
+import FullNameField from './FullNameField';
+import EmailField from './EmailField';
+import PasswordField from './PasswordField';
+import ResendConfirmationSection from './ResendConfirmationSection';
 
 interface AuthFormProps {
   isSignUp: boolean;
@@ -127,55 +128,22 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
       </div>
 
       {isSignUp && (
-        <div className="space-y-2">
-          <Label htmlFor="fullName">Full Name</Label>
-          <div className="relative">
-            <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-            <Input
-              id="fullName"
-              placeholder="Enter your full name"
-              type="text"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="pl-10"
-              required={isSignUp}
-            />
-          </div>
-        </div>
+        <FullNameField
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          required={isSignUp}
+        />
       )}
 
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
-        <div className="relative">
-          <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-          <Input
-            id="email"
-            placeholder="Enter your email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="pl-10"
-            required
-          />
-        </div>
-      </div>
+      <EmailField
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
 
-      <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
-        <div className="relative">
-          <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-          <Input
-            id="password"
-            placeholder="Enter your password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="pl-10"
-            required
-            minLength={6}
-          />
-        </div>
-      </div>
+      <PasswordField
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
 
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? 'Please wait...' : (isSignUp ? 'Create account' : 'Sign in')}
@@ -187,25 +155,14 @@ const AuthForm = ({ isSignUp, loading, setLoading }: AuthFormProps) => {
         </div>
       )}
 
-      {showResend && !isSignUp && (
-        <div className="flex flex-col items-center space-y-2 mt-2">
-          <p className="text-xs text-gray-500">
-            Didn't get the confirmation email? Check your spam/junk folder or resend it.
-          </p>
-          <Button
-            type="button"
-            size="sm"
-            className="w-auto"
-            onClick={handleResendConfirmation}
-            disabled={resendLoading}
-          >
-            {resendLoading ? 'Resending...' : 'Resend confirmation email'}
-          </Button>
-        </div>
-      )}
+      <ResendConfirmationSection
+        show={showResend}
+        isSignUp={isSignUp}
+        resendLoading={resendLoading}
+        onResend={handleResendConfirmation}
+      />
     </form>
   );
 };
 
 export default AuthForm;
-
