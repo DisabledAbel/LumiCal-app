@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,12 +8,21 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { Loader2 } from 'lucide-react';
 
 export default function AuthPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate('/dashboard');
+    }
+  }, [user, authLoading, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +32,7 @@ export default function AuthPage() {
       toast.error(error.message);
     } else {
       toast.success('Logged in successfully!');
-      navigate('/');
+      navigate('/dashboard');
     }
     setLoading(false);
   };
@@ -35,7 +44,7 @@ export default function AuthPage() {
         email, 
         password,
         options: {
-            emailRedirectTo: window.location.origin
+            emailRedirectTo: `${window.location.origin}/dashboard`
         }
     });
     if (error) {
@@ -45,6 +54,14 @@ export default function AuthPage() {
     }
     setLoading(false);
   };
+  
+  if (authLoading || user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-pink-100 to-purple-200 dark:from-purple-950 dark:to-slate-900">
+        <Loader2 className="h-8 w-8 animate-spin text-white" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-pink-100 to-purple-200 dark:from-purple-950 dark:to-slate-900 p-4">
